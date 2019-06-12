@@ -8,16 +8,22 @@ const todoRoutes = express.Router();
 
 let Todo = require('./todo.model');
 
+// require db connection
+require('./models');
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use('/todos', todoRoutes);
 
+app.use(express.static('../build'));
+
+/*
 mongoose.connect('mongodb://127.0.0.1:27017/todos', { useNewUrlParser: true });
 const connection = mongoose.connection;
 
 connection.once('open', function() {
     console.log("MongoDB database connection established successfully");
-})
+})*/
 
 app.listen(PORT, function() {
     console.log("Server is running on Port: " + PORT);
