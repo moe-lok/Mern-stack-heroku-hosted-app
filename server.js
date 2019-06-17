@@ -41,6 +41,11 @@ todoRoutes.route('/:id').get(function(req, res) {
     Todo.findById(id, function(err, todo) {
         res.json(todo);
     });
+}).delete(function(req, res){
+    Todo.findById({ _id: req.params.id })
+			.then(todo => todo.remove())
+			.then(alltodo => res.json(alltodo))
+			.catch(err => res.status(422).json(err));
 });
 
 todoRoutes.route('/add').post(function(req, res) {

@@ -2,7 +2,15 @@ import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
-const Todo = props => (
+
+const Todo = props => {
+    function deleteBook(id) {
+
+        axios.delete('/todos/' + id)
+            .catch(err => console.log(err));
+    };
+
+    return(
     <tr>
         <td className={props.todo.todo_completed ? 'completed' : ''}>{props.todo.todo_description}</td>
         <td className={props.todo.todo_completed ? 'completed' : ''}>{props.todo.todo_responsible}</td>
@@ -10,11 +18,14 @@ const Todo = props => (
         <td>
             <Link to={"/edit/"+props.todo._id}>Edit</Link>
         </td>
-    </tr>
-)
-
+        <td>
+            <button onClick={() => deleteBook(props.todo._id)} className="btn btn-primary">Delete</button>
+        </td>
+    </tr>);
+}
 
 export default class TodoList extends Component{
+
     render() {
         return(
             <div>
@@ -42,6 +53,10 @@ export default class TodoList extends Component{
     }
 
     componentDidMount() {
+        this.loadTodos();
+    }
+
+    loadTodos = () =>{
         axios.get('/todos/')
             .then(response => {
                 this.setState({ todos: response.data });
