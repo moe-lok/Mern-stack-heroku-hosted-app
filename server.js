@@ -12,6 +12,8 @@ let Todo = require('./models/todo.model');
 // require db connection
 require('./models');
 
+app.use('/', express.static(path.join(__dirname, '/client/build')));
+
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -74,11 +76,11 @@ todoRoutes.route('/update/:id').post(function(req, res) {
 app.use('/todos', todoRoutes);
 
 app.use(express.static('./client/build'));
-app.use(express.static(path.join(__dirname, "client", "build")))
+
 
 // If no API routes are hit, send the React app
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "client", "build", "index.html"));
+app.use(function(req, res) {
+	res.sendFile(path.join(__dirname, './client/build/index.html'));
 });
 
 app.listen(PORT, function() {
