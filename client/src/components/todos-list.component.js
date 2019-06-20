@@ -1,7 +1,10 @@
 import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import Pusher from 'pusher-js';
 
+const PUSHER_APP_KEY = '9d54f9c1c639963990ba';
+const PUSHER_APP_CLUSTER = 'ap1';
 
 const Todo = props => {
     function deleteBook(id) {
@@ -26,6 +29,45 @@ const Todo = props => {
 
 export default class TodoList extends Component{
 
+    constructor(props) {
+        super(props);
+        this.state = {todos: []};
+    }
+
+
+
+    componentDidMount() {
+        this.loadTodos();
+        this.pusher = new Pusher(PUSHER_APP_KEY,{
+            cluster: PUSHER_APP_CLUSTER,
+            encrypted: true,
+        });
+        this.channel = this.pusher.subscribe('todos');
+
+        this.channel.bind('inserted', this.loadTodos);
+
+        this.channel.bind('deleted', this.loadTodos);
+
+        this.channel.bind('updated', this.loadTodos);
+    }
+
+    loadTodos = (data)=>{
+        console.log(data);
+        axios.get('/todos/')
+            .then(response => {
+                this.setState({ todos: response.data });
+            })
+            .catch(function (error){
+                console.log(error);
+            });
+    }
+
+    todoList() {
+        return this.state.todos.map(function(currentTodo, i){
+            return <Todo todo={currentTodo} key={i} />;
+        })
+    }
+
     render() {
         return(
             <div>
@@ -46,29 +88,5 @@ export default class TodoList extends Component{
             </div>
         )
     }
-
-    constructor(props) {
-        super(props);
-        this.state = {todos: []};
-    }
-
-    componentDidMount() {
-        this.loadTodos();
-    }
-
-    loadTodos = () =>{
-        axios.get('/todos/')
-            .then(response => {
-                this.setState({ todos: response.data });
-            })
-            .catch(function (error){
-                console.log(error);
-            })
-    }
-
-    todoList() {
-        return this.state.todos.map(function(currentTodo, i){
-            return <Todo todo={currentTodo} key={i} />;
-        })
-    }
+    
 }

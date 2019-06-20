@@ -10,13 +10,15 @@
     "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build"
   },
   "keywords": [],
-  "author": "Muhammad Lokman <muhammmad24lokman@gmail.com> (https://muhd-lokman.weebly.com/",
+  "author": "Muhammad Lokman <muhammmad24lokman@gmail.com> (https://muhd-lokman.weebly.com/)",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "mongoose": "^5.5.14"
+    "mongoose": "^5.5.14",
+    "pusher": "^2.2.0",
+    "pusher-js": "^4.4.0"
   },
   "engines": {
     "node": "10.16.0"

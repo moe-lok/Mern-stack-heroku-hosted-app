@@ -6,11 +6,24 @@ const mongoose = require('mongoose');
 const PORT = process.env.PORT || 5000;
 const todoRoutes = express.Router();
 const path = require('path');
+const Pusher = require('pusher');
+const URI = require('./config/index');
+
+const pusher = new Pusher({
+    appId      : '806958',
+    key        : '9d54f9c1c639963990ba',
+    secret     : '3d9737605a1c1ac0eed6',
+    cluster    : 'ap1',
+    encrypted  : true,
+  });
+const channel = 'todos';
 
 let Todo = require('./models/todo.model');
 
 // require db connection
 require('./models');
+mongoose.connect(process.env.MONGODB_URI || URI, { useNewUrlParser: true });
+const db = require('./models/index');
 
 app.use('/', express.static(path.join(__dirname, '/client/build')));
 
@@ -88,6 +101,44 @@ app.use(function(req, res) {
 	res.sendFile(path.join(__dirname, './client/build/index.html'));
 });
 
-app.listen(PORT, function() {
-    console.log("Server is running on Port: " + PORT);
+db.once('open',()=>{
+    app.listen(PORT, function() {
+        console.log("Server is running on Port: " + PORT);
+    
+    });
+
+    const todosCollection = db.collection('todos');
+    const changeStream = todosCollection.watch();
+
+    changeStream.on('change',(change)=>{
+        console.log(change);
+
+        if(change.operationType === 'insert') {
+            const todos = change.fullDocument;
+            pusher.trigger(
+              channel,
+              'inserted', 
+              {
+                id: todos._id,
+                todo_description: todos.todo_description,
+                todo_responsible: todos.todo_responsible,
+                todo_priority: todos.todo_description,
+                todo_completed: todos.todo_completed,
+              }
+            ); 
+          } else if(change.operationType === 'delete') {
+            pusher.trigger(
+              channel,
+              'deleted', 
+              change.documentKey._id
+            );
+          } else if(change.operationType === 'update') {
+            pusher.trigger(
+              channel,
+              'updated', 
+              change.updateDescription
+            );
+          }
+    });
+
 });
