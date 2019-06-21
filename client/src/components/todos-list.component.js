@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Pusher from 'pusher-js';
+import logo from "../fortraLogo.png";
 
 const PUSHER_APP_KEY = '9d54f9c1c639963990ba';
 const PUSHER_APP_CLUSTER = 'ap1';
@@ -43,15 +44,15 @@ export default class TodoList extends Component{
             encrypted: true,
         });
         this.channel = this.pusher.subscribe('todos');
-
         this.channel.bind('inserted', this.loadTodos);
-
         this.channel.bind('deleted', this.loadTodos);
-
         this.channel.bind('updated', this.loadTodos);
+
+        this.grantNotificationPermission();
     }
 
     loadTodos = (data)=>{
+        new Notification('Todos', { body: data, icon: logo  });
         console.log(data);
         axios.get('/todos/')
             .then(response => {
@@ -67,6 +68,31 @@ export default class TodoList extends Component{
             return <Todo todo={currentTodo} key={i} />;
         })
     }
+
+    grantNotificationPermission = () => {
+        if (!('Notification' in window)) {
+          alert('This browser does not support system notifications');
+          return;
+        }
+
+        if (Notification.permission === 'granted') {
+          new Notification('You are already subscribed to message notifications');
+          return;
+        }
+
+        if (
+          Notification.permission !== 'denied' ||
+          Notification.permission === 'default'
+        ) {
+          Notification.requestPermission().then(result => {
+            if (result === 'granted') {
+              new Notification(
+                'Awesome! You will start receiving notifications shortly'
+              );
+            }
+          });
+        }
+    };
 
     render() {
         return(
