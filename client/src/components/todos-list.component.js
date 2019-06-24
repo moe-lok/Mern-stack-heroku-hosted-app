@@ -35,8 +35,6 @@ export default class TodoList extends Component{
         this.state = {todos: []};
     }
 
-
-
     componentDidMount() {
         this.loadTodos();
         this.pusher = new Pusher(PUSHER_APP_KEY,{
@@ -47,12 +45,14 @@ export default class TodoList extends Component{
         this.channel.bind('inserted', this.loadTodos);
         this.channel.bind('deleted', this.loadTodos);
         this.channel.bind('updated', this.loadTodos);
-
-        this.grantNotificationPermission();
     }
 
     loadTodos = (data)=>{
-        new Notification('Todos', { body: data, icon: logo  });
+        new Notification('Todos', { 
+            body: data, 
+            icon: logo,
+            tag: 'insert, update, delete'
+        });
         console.log(data);
         axios.get('/todos/')
             .then(response => {
@@ -69,30 +69,7 @@ export default class TodoList extends Component{
         })
     }
 
-    grantNotificationPermission = () => {
-        if (!('Notification' in window)) {
-          alert('This browser does not support system notifications');
-          return;
-        }
-
-        if (Notification.permission === 'granted') {
-          new Notification('You are already subscribed to message notifications');
-          return;
-        }
-
-        if (
-          Notification.permission !== 'denied' ||
-          Notification.permission === 'default'
-        ) {
-          Notification.requestPermission().then(result => {
-            if (result === 'granted') {
-              new Notification(
-                'Awesome! You will start receiving notifications shortly'
-              );
-            }
-          });
-        }
-    };
+    
 
     render() {
         return(
