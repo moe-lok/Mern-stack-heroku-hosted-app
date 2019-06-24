@@ -12,6 +12,20 @@ import logo from "./fortraLogo.png";
 
 class App extends Component {
 
+  requestDesktopNotificationPermission(){
+    if(Notification && Notification.permission === 'default') {
+      Notification.requestPermission(function (permission) {
+         if(!('permission' in Notification)) {
+           Notification.permission = permission;
+         }
+      });
+    }
+  }
+
+  componentDidMount() {
+    this.requestDesktopNotificationPermission();
+  }
+
   render() {
     return (
       <Router>

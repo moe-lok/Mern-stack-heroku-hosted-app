@@ -48,6 +48,12 @@ export default class TodoList extends Component{
     }
 
     loadTodos = (data)=>{
+        new Notification('Title App', {
+            body: data,
+            icon: logo,
+            tag: 'testLog'
+          });
+
         console.log(data);
         axios.get('/todos/')
             .then(response => {
