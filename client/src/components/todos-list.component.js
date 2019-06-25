@@ -42,17 +42,30 @@ export default class TodoList extends Component{
             encrypted: true,
         });
         this.channel = this.pusher.subscribe('todos');
-        this.channel.bind('inserted', this.loadTodos);
-        this.channel.bind('deleted', this.loadTodos);
+        this.channel.bind('inserted', this.inserted);
+        this.channel.bind('deleted', this.deleted);
         this.channel.bind('updated', this.loadTodos);
     }
 
-    loadTodos = (data)=>{
-        new Notification('Title App', {
+    inserted = (data)=>{
+        this.loadTodos();
+        new Notification('Noti Insert Title',{
+            icon:logo,
             body: data,
-            icon: logo,
-            tag: 'testLog'
-          });
+            tag: 'noti insert tag'
+        });
+    }
+
+    deleted = (data)=>{
+        this.loadTodos();
+        new Notification('Noti Delete Title',{
+            icon:logo,
+            body: data,
+            tag: 'noti delete tag'
+        });
+    }
+
+    loadTodos = (data)=>{
 
         console.log(data);
         axios.get('/todos/')
