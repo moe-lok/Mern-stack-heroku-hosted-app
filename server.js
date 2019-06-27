@@ -9,6 +9,8 @@ const path = require('path');
 const Pusher = require('pusher');
 const URI = require('./config/index');
 
+const webpush = require('web-push');
+
 const pusher = new Pusher({
     appId      : '806958',
     key        : '9d54f9c1c639963990ba',
@@ -29,6 +31,28 @@ app.use('/', express.static(path.join(__dirname, '/client/build')));
 
 app.use(cors());
 app.use(bodyParser.json());
+
+const publicVapidKey = 'BJg0C859cMvGhcGx_a05yTo6P-VWVgxKVNAg-KrfsfDoqzWxfUOkLqywlcXjTEj_4qU0gHNbxqxJ_qRfifMgJjk';
+const privateVapidkey = 'MNixITt_jFETWBZXs7-tUDQenrZNcEkbqPGpTFvZE9A';
+
+webpush.setVapidDetails('mailto:muhammad24lokman@gmail.com', publicVapidKey, privateVapidkey);
+
+//Subscribe Route
+app.post("/subscribe", (req, res) =>{
+    //Get pushSubscription object
+    const subscription = req.body;
+
+    // Send 201 - resource created
+    res.status(201).json({});
+
+    // Create payload
+    const payload = JSON.stringify({ title: 'PushTest'});
+
+    // Pass object into sendNotification
+    webpush
+        .sendNotification(subscription, payload)
+        .catch(err => console.error(err));
+});
 
 /*
 mongoose.connect('mongodb://127.0.0.1:27017/todos', { useNewUrlParser: true });

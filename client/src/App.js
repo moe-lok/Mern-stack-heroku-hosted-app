@@ -11,27 +11,12 @@ import TodosList from "./components/todos-list.component";
 import logo from "./fortraLogo.png";
 
 class App extends Component {
-
-  requestDesktopNotificationPermission(){
-    if(Notification && Notification.permission === 'default') {
-      Notification.requestPermission(function (permission) {
-         if(!('permission' in Notification)) {
-           Notification.permission = permission;
-         }
-      });
-    }
-  }
-
-  componentDidMount() {
-    this.requestDesktopNotificationPermission();
-  }
-
   render() {
     return (
       <Router>
         <div className="container">
           <nav className="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="https://muhd-lokman.weebly.com/" target="_blank">
+            <a className="navbar-brand" href="https://muhd-lokman.weebly.com/" target="_blank">
               <img src={logo} width="30" height="30" alt="CodingTheSmartWay.com" />
             </a>
             <Link to="/" className="navbar-brand">MERN-Stack Todo App</Link>

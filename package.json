@@ -18,7 +18,8 @@
     "express": "^4.17.1",
     "mongoose": "^5.5.14",
     "pusher": "^2.2.0",
-    "pusher-js": "^4.4.0"
+    "pusher-js": "^4.4.0",
+    "web-push": "^3.3.5"
   },
   "engines": {
     "node": "10.16.0"
