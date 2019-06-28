@@ -49,20 +49,24 @@ export default class TodoList extends Component{
 
     inserted = (data)=>{
         this.loadTodos();
+        /*
         new Notification('Noti Insert Title',{
             icon:logo,
             body: data,
             tag: 'noti insert tag'
         });
+        */
     }
 
     deleted = (data)=>{
         this.loadTodos();
+        /*
         new Notification('Noti Delete Title',{
             icon:logo,
             body: data,
             tag: 'noti delete tag'
         });
+        */
     }
 
     loadTodos = (data)=>{

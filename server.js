@@ -146,16 +146,52 @@ db.once('open',()=>{
                 id: todos._id,
                 todo_description: todos.todo_description,
                 todo_responsible: todos.todo_responsible,
-                todo_priority: todos.todo_description,
+                todo_priority: todos.todo_priority,
                 todo_completed: todos.todo_completed,
               }
             ); 
+
+            // notification for insert
+            app.post("/subscribe", (req, res) =>{
+                //Get pushSubscription object
+                const subscription = req.body;
+                // Send 201 - resource created
+                res.status(201).json({});
+                // Create payload
+                const payload = JSON.stringify({ 
+                    title: 'Item inserted',
+                    body: todos.todo_description
+                });
+                // Pass object into sendNotification
+                webpush
+                    .sendNotification(subscription, payload)
+                    .catch(err => console.error(err));
+            });
+
           } else if(change.operationType === 'delete') {
             pusher.trigger(
               channel,
               'deleted', 
               change.documentKey._id
             );
+
+            // notification for delete
+            app.post("/subscribe", (req, res) =>{
+                //Get pushSubscription object
+                const subscription = req.body;
+                // Send 201 - resource created
+                res.status(201).json({});
+                // Create payload
+                const payload = JSON.stringify({ 
+                    title: 'Item deleted',
+                    body: todos._id
+                });
+                // Pass object into sendNotification
+                webpush
+                    .sendNotification(subscription, payload)
+                    .catch(err => console.error(err));
+            });
+
           } else if(change.operationType === 'update') {
             pusher.trigger(
               channel,
