@@ -36,11 +36,13 @@ const publicVapidKey = 'BJg0C859cMvGhcGx_a05yTo6P-VWVgxKVNAg-KrfsfDoqzWxfUOkLqyw
 const privateVapidkey = 'MNixITt_jFETWBZXs7-tUDQenrZNcEkbqPGpTFvZE9A';
 
 webpush.setVapidDetails('mailto:muhammad24lokman@gmail.com', publicVapidKey, privateVapidkey);
-
+var subs;
 //Subscribe Route
 app.post("/subscribe", (req, res) =>{
     //Get pushSubscription object
     const subscription = req.body;
+    subs = subscription;
+    console.log(subscription);
 
     // Send 201 - resource created
     res.status(201).json({});
@@ -152,21 +154,13 @@ db.once('open',()=>{
             ); 
 
             // notification for insert
-            app.post("/subscribe", (req, res) =>{
-                //Get pushSubscription object
-                const subscription = req.body;
-                // Send 201 - resource created
-                res.status(201).json({});
-                // Create payload
-                const payload = JSON.stringify({ 
-                    title: 'Item inserted',
-                    body: todos.todo_description
-                });
-                // Pass object into sendNotification
-                webpush
-                    .sendNotification(subscription, payload)
-                    .catch(err => console.error(err));
+            const payload = JSON.stringify({ 
+                title: 'Item inserted',
+                body: todos.todo_description
             });
+            webpush
+                .sendNotification(subs, payload)
+                .catch(err => console.error(err));
 
           } else if(change.operationType === 'delete') {
             pusher.trigger(
@@ -176,21 +170,13 @@ db.once('open',()=>{
             );
 
             // notification for delete
-            app.post("/subscribe", (req, res) =>{
-                //Get pushSubscription object
-                const subscription = req.body;
-                // Send 201 - resource created
-                res.status(201).json({});
-                // Create payload
-                const payload = JSON.stringify({ 
-                    title: 'Item deleted',
-                    body: todos._id
-                });
-                // Pass object into sendNotification
-                webpush
-                    .sendNotification(subscription, payload)
-                    .catch(err => console.error(err));
+            const payload = JSON.stringify({ 
+                title: 'Item deleted',
+                body: change.documentKey._id
             });
+            webpush
+                .sendNotification(subs, payload)
+                .catch(err => console.error(err));
 
           } else if(change.operationType === 'update') {
             pusher.trigger(
