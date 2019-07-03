@@ -47,13 +47,6 @@ app.post("/subscribe", (req, res) =>{
     // Send 201 - resource created
     res.status(201).json({});
 
-    // Create payload
-    const payload = JSON.stringify({ title: 'PushTest'});
-
-    // Pass object into sendNotification
-    webpush
-        .sendNotification(subscription, payload)
-        .catch(err => console.error(err));
 });
 
 /*

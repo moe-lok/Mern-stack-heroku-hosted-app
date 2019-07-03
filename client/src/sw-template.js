@@ -12,6 +12,16 @@ self.addEventListener('push', e =>{
     });
 });
 
+self.addEventListener('notificationclick', function(event) {
+  console.log('[Service Worker] Notification click Received.');
+
+  event.notification.close();
+
+  event.waitUntil(
+    clients.openWindow('https://moe-to-do-app.herokuapp.com/')
+  );
+});
+
 if ('function' === typeof importScripts) {
   importScripts(
     'https://storage.googleapis.com/workbox-cdn/releases/3.5.0/workbox-sw.js'
